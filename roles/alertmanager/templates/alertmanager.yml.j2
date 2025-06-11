@@ -1,17 +1,17 @@
 global:
-  resolve_timeout: 5m
+  resolve_timeout: 5s
 
 route:
-  receiver: 'discord'
-  group_wait: 30s
+  receiver: discord
+  group_wait: 5s
   group_interval: 5m
   repeat_interval: 1h
 
 receivers:
-  - name: 'discord'
-    webhook_configs:
+  - name: discord
+    discord_configs:
       - send_resolved: true
-        url: '{{ discord_webhook_url }}'
+        webhook_url: '{{ discord_webhook_url }}'
 
 # Tùy chọn: giữ data lâu hơn
 # storage:
