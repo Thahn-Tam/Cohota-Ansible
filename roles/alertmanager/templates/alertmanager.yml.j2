@@ -9,10 +9,9 @@ route:
 
 receivers:
   - name: discord
-    discord_configs:
-      - send_resolved: true
-        webhook_url: '{{ discord_webhook_url }}'
-
+    webhook_configs:
+      - url: '{{ discord_webhook_url }}'
+        send_resolved: true
 # Tùy chọn: giữ data lâu hơn
 # storage:
 #   path: /var/lib/alertmanager
