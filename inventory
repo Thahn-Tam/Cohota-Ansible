@@ -1,0 +1,16 @@
+[monitoring_servers]
+160.191.49.92 ansible_user=root  # Prometheus + Grafana + Exporter
+160.191.49.85 ansible_user=root  # Exporter
+160.191.49.83 ansible_user=root   ansible_python_interpreter=/usr/bin/python3 # Exporter
+
+[prometheus_server]
+160.191.49.92
+
+[grafana_server]
+160.191.49.92
+
+[exporter_nodes]
+160.191.49.92
+160.191.49.85
+160.191.49.83
+

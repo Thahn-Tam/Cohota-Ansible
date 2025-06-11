@@ -1,0 +1,12 @@
+# roles/prometheus/templates/alert.rules.yml.j2
+groups:
+  - name: example
+    rules:
+      - alert: InstanceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Host {{ '{{ $labels.instance }}' }} is down"
+          description: "Máy {{ '{{ $labels.instance }}' }} không phản hồi trong hơn 1 phút."

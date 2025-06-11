@@ -1,0 +1,75 @@
+---
+# tasks file for roles/alertmanager
+- name: Tạo user cho Alertmanager
+  user:
+    name: alertmanager
+    shell: /usr/sbin/nologin
+    system: yes
+    create_home: no
+
+- name: Tải Alertmanager
+  get_url:
+    url: https://github.com/prometheus/alertmanager/releases/download/v0.25.0/alertmanager-0.25.0.linux-amd64.tar.gz
+    dest: /tmp/alertmanager.tar.gz
+    mode: '0644'
+    force: no
+
+- name: Giải nén Alertmanager
+  unarchive:
+    src: /tmp/alertmanager.tar.gz
+    dest: /opt/
+    remote_src: yes
+
+- name: Copy binary Alertmanager
+  copy:
+    remote_src: yes
+    src: /opt/alertmanager-0.25.0.linux-amd64/alertmanager
+    dest: /usr/local/bin/alertmanager
+    mode: '0755'
+
+- name: Tạo thư mục config & data
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: alertmanager
+    group: alertmanager
+    mode: "{{ item.mode }}"
+  loop:
+    - { path: /etc/alertmanager, mode: '0755' }
+    - { path: /var/lib/alertmanager, mode: '0755' }
+
+- name: Deploy config Alertmanager
+  template:
+    src: alertmanager.yml.j2
+    dest: /etc/alertmanager/alertmanager.yml
+    owner: alertmanager
+    group: alertmanager
+    mode: '0644'
+  notify: reload alertmanager
+
+- name: Tạo systemd service cho Alertmanager
+  copy:
+    dest: /etc/systemd/system/alertmanager.service
+    content: |
+      [Unit]
+      Description=Prometheus Alertmanager
+      Wants=network-online.target
+      After=network-online.target
+
+      [Service]
+      User=alertmanager
+      ExecStart=/usr/local/bin/alertmanager \
+        --config.file=/etc/alertmanager/alertmanager.yml \
+        --storage.path=/var/lib/alertmanager
+
+      [Install]
+      WantedBy=multi-user.target
+  notify: daemon-reload alertmanager
+
+- name: Bật và khởi động Alertmanager
+  systemd:
+    name: alertmanager
+    enabled: yes
+    state: started
+    daemon_reload: yes
+

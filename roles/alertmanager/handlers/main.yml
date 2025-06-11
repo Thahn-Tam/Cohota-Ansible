@@ -1,0 +1,12 @@
+---
+# handlers file for roles/alertmanager
+
+- name: daemon-reload alertmanager
+  systemd:
+    daemon_reload: yes
+
+- name: reload alertmanager
+  systemd:
+    name: alertmanager
+    state: restarted
+

@@ -1,0 +1,18 @@
+- hosts: prometheus_server
+  become: yes
+  vars_files:
+    - vault/vault.yml
+  roles:
+    - common
+    - prometheus
+    - alertmanager
+
+- hosts: grafana_server
+  become: yes
+  roles:
+    - grafana
+
+- hosts: exporter_nodes
+  become: yes
+  roles:
+    - node_exporter
